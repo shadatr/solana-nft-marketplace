@@ -1,11 +1,18 @@
 
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Amaranth } from "next/font/google";
 import "./globals.css";
 import WalletAndSessionProvider from "./providers/walletProvider";
 import { CandyMachineProvider } from "./providers/candyMachineProvider";
+import Image from "next/image";
+import { NextUIProvider } from "@nextui-org/system";
+import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/toaster";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Amaranth({
+  subsets: ["latin"],
+  weight: "400"
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -19,12 +26,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={inter.className} >
+      <NextUIProvider className={cn(
+          "min-h-screen bg-background dark font-sans antialiased",
+  
+        )}>
         <WalletAndSessionProvider>
           <CandyMachineProvider>
+            <Image src={'/SolMintMarket.png'} width={200} height={200} alt={""} className="m-10 absolute left-0 top-0 z-40"/>
             {children}
+            <Toaster />
             </CandyMachineProvider>
         </WalletAndSessionProvider>
+      </NextUIProvider>
       </body>
     </html>
   );

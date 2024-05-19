@@ -6,9 +6,11 @@ import { Connection, Transaction, VersionedTransaction } from "@solana/web3.js";
 import axios from "axios";
 import base58 from "bs58";
 import React from "react";
+import { useToast } from "./ui/use-toast";
 
 const MintButton = () => {
   const wallet = useWallet();
+  const { toast } = useToast()
 
   const onClick = async () => {
     let connection = new Connection(RPC_URL);
@@ -25,21 +27,23 @@ const MintButton = () => {
           const txSig = await connection.sendTransaction(signedTx!, {
             skipPreflight: true,
           });
-          console.log(txSig);
           console.log("Minted successfully");
         } catch (e) {
-          console.log(e);
           console.log("Minting failed");
         }
       }else{
         console.log("Minting failed from backend");
       }
+    }else{
+      toast({
+        title: "You should select a wallet",
+      })
     }
   };
 
   return (
     <button
-      className="bg-BlueGrotto text-[30px] py-5 px-14 m-4 rounded-3xl"
+      className="text-secondary border border-pink rounded-[30px]  py-3 font-bold px-14 mr-5"
       onClick={onClick}
     >
       Mint

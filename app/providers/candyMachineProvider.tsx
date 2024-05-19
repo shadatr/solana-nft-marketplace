@@ -17,7 +17,6 @@ import { CandyMachineItemsType, GuardGroupType } from "@/types";
 import base58 from "bs58";
 import { createContext } from "react";
 import axios from "axios";
-import { mockStorage } from "@metaplex-foundation/umi-storage-mock";
 
 type CandyMachineContextState = {
   candyMachine: CandyMachine | undefined;
@@ -57,14 +56,14 @@ export const CandyMachineProvider: FC<CandyMachineProviderProps> = ({
     }
   }, [umi]);
 
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      if (umi) {
-        loadCandymachine(umi);
-      }
-    }, 10000);
-    return () => clearInterval(interval);
-  }, [candyMachine?.items, umi]);
+  // useEffect(() => {
+  //   const interval = setInterval(async () => {
+  //     if (umi) {
+  //       loadCandymachine(umi);
+  //     }
+  //   }, 10000);
+  //   return () => clearInterval(interval);
+  // }, [candyMachine?.items, umi]);
 
   const loadCandymachine = async (umi: Umi) => {
     if (umi) {

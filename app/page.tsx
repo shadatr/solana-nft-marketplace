@@ -1,60 +1,26 @@
 "use client";
-import Image from "next/image";
+import MintButton from "@/components/mintButton";
 import { useCandyMachine } from "./providers/candyMachineProvider";
-import { useEffect } from "react";
-import { type } from "os";
-import axios from "axios";
-
+import NftCard from "@/components/nftCard";
+import { Wallet } from "@/components/wallet";
 
 export default function Home() {
-  const candyMachine= useCandyMachine()
+  const candyMachine = useCandyMachine();
 
-  // useEffect(()=>{
-  //   const uploadData=async ()=>{
-
-  //     const fetchData = async (url:string) => {
-  //       try {
-  //         const response = await axios.get(url);
-  //         if (!response) {
-  //           console.log('Failed to fetch data');
-  //         }
-  //         return response.data;
-  //       } catch (error) {
-  //         console.error('Error fetching data:', error);
-  //         return null;
-  //       }
-  //     };
-      
-  //     // Function to fetch data for all items
-  //     const fetchAllData = async () => {
-  //       const fetchedItems = [];
-  //       if(candyMachine.candyMachine?.items)
-  //       for (const item of candyMachine.candyMachine?.items) {
-  //         const { index, uri, ...rest } = item;
-  //         let fetchedItem;
-  //         const data:CandyMachinetype = await fetchData(uri);
-  //         if (data) {
-  //           fetchedItem = data;
-  //         }
-  //         fetchedItems.push(fetchedItem);
-  //       }
-  //       return fetchedItems;
-  //     };
-      
-  //     // Usage
-  //     const fetchedItems= await fetchAllData()
-  //       console.log('Fetched items:', fetchedItems);
-  //   }
-  //   uploadData()
-  // },[candyMachine.mintGroups])
-
-  console.log(candyMachine)
   return (
-    <div>
-      {candyMachine.candyMachine?.items.map((item,index)=>
-      <span key={index}>
-        {/* <Image width={100} height={100} src={}/> */}
-      </span>)}
+    <div className="bg-NavyBlue flex flex-col justify-center items-center p-12 text-secondary">
+      <Wallet/>
+      <MintButton/>
+      <div className="grid grid-cols-4 gap-4">
+        {candyMachine.items?.map((item, index) => {
+          const nftItem=candyMachine.candyMachine?.items.find((itm,index)=>itm.name==item.name)
+          if(nftItem)
+          return(
+          <span key={index}>
+            <NftCard itemMetadata={item} nftItem={nftItem}/>
+          </span>
+        )})}
+      </div>
     </div>
   );
 }

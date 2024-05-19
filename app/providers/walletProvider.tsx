@@ -11,7 +11,7 @@ const WalletAndSessionProvider = ({ children }:{children:ReactNode}) => {
       <ConnectionProvider endpoint={"https://api.devnet.solana.com"}>
         <WalletProvider wallets={wallets} autoConnect>
           <WalletModalProvider>
-            <main className="dark text-foreground bg-background">
+            <main>
               {children}
             </main>
           </WalletModalProvider>

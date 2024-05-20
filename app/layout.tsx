@@ -8,6 +8,7 @@ import Image from "next/image";
 import { NextUIProvider } from "@nextui-org/system";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/toaster";
+import Link from "next/link";
 
 const inter = Amaranth({
   subsets: ["latin"],
@@ -33,7 +34,9 @@ export default function RootLayout({
         )}>
         <WalletAndSessionProvider>
           <CandyMachineProvider>
-            <Image src={'/SolMintMarket.png'} width={200} height={200} alt={""} className="m-10 absolute left-0 top-0 z-40"/>
+            <Link href={'/'}>
+            <Image src={'/SolMintMarket.png'} width={200} height={200} alt={""} className="lg:m-10 sm:m-5 absolute left-0 top-0 z-40"/>
+            </Link>
             {children}
             <Toaster />
             </CandyMachineProvider>

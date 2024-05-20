@@ -4,7 +4,6 @@ import React, { FC, useMemo } from "react";
 import {
   ConnectionProvider,
   WalletProvider,
-  useWallet,
 } from "@solana/wallet-adapter-react";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import {
@@ -12,7 +11,6 @@ import {
   PhantomWalletAdapter,
   SolflareWalletAdapter,
   TorusWalletAdapter,
-  UnsafeBurnerWalletAdapter,
 } from "@solana/wallet-adapter-wallets";
 import {
   WalletModalProvider,
@@ -42,7 +40,7 @@ export const Wallet: FC = () => {
     <ConnectionProvider endpoint={endpoint}>
       <WalletProvider wallets={wallets} autoConnect>
         <WalletModalProvider>
-          <WalletMultiButton className="border border-pink" style={{ background: "#00C2FF", borderRadius: "30px" }}/>
+          <WalletMultiButton className="border border-pink" style={{ background: "#00C2FF", borderRadius: "30px" }} />
         </WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>

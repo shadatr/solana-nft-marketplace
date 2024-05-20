@@ -9,18 +9,15 @@ import { useWallet } from "@solana/wallet-adapter-react";
 
 const Page = () => {
   const candyMachine = useCandyMachine();
-  const { connected } = useWallet();
 
   return (
     <div className="flex w-[100%] justify-center items-center flex-col">
-      <div className="right-0 top-0 m-5 absolute ">
-        {connected&&
+      <div className="right-0 lg:top-0 sm:top-14 m-5 absolute flex items-center">
         <MintButton />
-        }
         <Wallet />
       </div>
       {candyMachine.candyMachine?
-      <div className="grid grid-cols-4 gap-4 w-[80%] mt-40">
+      <div className="grid lg:grid-cols-4 gap-4 lg:w-[80%] sm:w-[100%] justify-center items-center mt-40">
         {candyMachine.items?.map((item, index) => {
           const nftItem = candyMachine.candyMachine?.items.find(
             (itm, index) => itm.name == item.name
@@ -34,7 +31,7 @@ const Page = () => {
         })}
       </div>
       :
-      <div className="grid grid-cols-4 gap-4 w-[80%] mt-40">
+      <div className="grid lg:grid-cols-4  gap-4 w-[80%] mt-40">
         {[...Array(8)].map((_, index) => (
           <div
             key={index}

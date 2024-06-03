@@ -41,31 +41,45 @@ export async function POST(req: Request) {
   );
 
   const nftMint = generateSigner(umi);
-  let tx = transactionBuilder()
-    .add(setComputeUnitLimit(umi, { units: 800_000 }))
-    .add(
-      mintV2(umi, {
-        candyMachine: CANDY_MACHINE_PUBLIC_KEY,
-        nftMint,
-        collectionMint,
-        collectionUpdateAuthority,
-        minter: minter,
-        mintArgs: {
-          thirdPartySigner: some({ signer: cosigner }),
-          solPayment: some({
-            destination: publicKey(
-              "GCAe5PPhguEzm5dKSE5pztUtCpSJ1jf7vqnk3VwpPjy"
-            ),
-          }),
-        },
+
+  try{
+    let tx = transactionBuilder()
+      .add(setComputeUnitLimit(umi, { units: 800_000 }))
+      .add(
+        mintV2(umi, {
+          candyMachine: CANDY_MACHINE_PUBLIC_KEY,
+          nftMint,
+          collectionMint,
+          collectionUpdateAuthority,
+          minter: minter,
+          mintArgs: {
+            thirdPartySigner: some({ signer: cosigner }),
+            solPayment: some({
+              destination: publicKey(
+                "9qiLntdSpsjWqy6aLaexwH7UG5TTZoSw9caUFRY5DXCh"
+              ),
+            }),
+          },
+        })
+      );
+
+      tx = tx.setBlockhash(await umi.rpc.getLatestBlockhash()
+      )
+      tx.setFeePayer(minter)
+  
+    return new Response(
+      JSON.stringify({
+        tx: Buffer.from(
+          umi.transactions.serialize(await tx.buildAndSign(umi))
+        ).toString("base64"),
       })
     );
-
-  return new Response(
-    JSON.stringify({
-      tx: Buffer.from(
-        umi.transactions.serialize(await tx.buildAndSign(umi))
-      ).toString("base64"),
-    })
-  );
+  }
+  catch(e){
+    return new Response(
+      JSON.stringify({
+        e
+      })
+      );
+  }
 }

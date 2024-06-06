@@ -19,6 +19,7 @@ import {
   mplCandyMachine,
 } from "@metaplex-foundation/mpl-candy-machine";
 
+
 export async function POST(req: Request) {
   const { wallet } = await req.json();
 
@@ -26,23 +27,17 @@ export async function POST(req: Request) {
 
   let umi = createUmi(RPC_URL).use(mplToolbox()).use(mplCandyMachine());
 
-  const cosignerKeypair = umi.eddsa.createKeypairFromSecretKey(
-    base58.serialize(process.env.THIRD_PARTY_SIGNER!)
-  );
+  const cosignerKeypair = umi.eddsa.createKeypairFromSecretKey(base58.serialize(process.env.THIRD_PARTY_SIGNER!));
   const cosigner = createSignerFromKeypair(umi, cosignerKeypair);
 
   umi = umi.use(signerIdentity(minter, true));
 
-  const collectionMint = publicKey(
-    process.env.NEXT_PUBLIC_COLLECTION_MINT ?? ""
-  );
-  const collectionUpdateAuthority = publicKey(
-    process.env.NEXT_PUBLIC_COLLECTION_AUTHORITY ?? ""
-  );
+  const collectionMint = publicKey(process.env.NEXT_PUBLIC_COLLECTION_MINT ?? "");
+  const collectionUpdateAuthority = publicKey(process.env.NEXT_PUBLIC_COLLECTION_AUTHORITY ?? "");
 
   const nftMint = generateSigner(umi);
 
-  try{
+  try {
     let tx = transactionBuilder()
       .add(setComputeUnitLimit(umi, { units: 800_000 }))
       .add(
@@ -55,31 +50,21 @@ export async function POST(req: Request) {
           mintArgs: {
             thirdPartySigner: some({ signer: cosigner }),
             solPayment: some({
-              destination: publicKey(
-                "9qiLntdSpsjWqy6aLaexwH7UG5TTZoSw9caUFRY5DXCh"
-              ),
+              destination: publicKey("9qiLntdSpsjWqy6aLaexwH7UG5TTZoSw9caUFRY5DXCh"),
             }),
           },
         })
       );
 
-      tx = tx.setBlockhash(await umi.rpc.getLatestBlockhash()
-      )
-      tx.setFeePayer(minter)
-  
-    return new Response(
-      JSON.stringify({
-        tx: Buffer.from(
-          umi.transactions.serialize(await tx.buildAndSign(umi))
-        ).toString("base64"),
-      })
-    );
-  }
-  catch(e){
-    return new Response(
-      JSON.stringify({
-        e
-      })
-      );
+    tx = tx.setBlockhash(await umi.rpc.getLatestBlockhash());
+    tx.setFeePayer(minter);
+
+    const signedTx = await tx.buildAndSign(umi);
+    const serializedTx = Buffer.from(umi.transactions.serialize(signedTx)).toString("base64");
+
+    return new Response(JSON.stringify({ tx: serializedTx }), { status: 200 });
+  } catch (e) {
+    console.error(e);
+    return new Response(JSON.stringify({ error: e }), { status: 500 });
   }
 }

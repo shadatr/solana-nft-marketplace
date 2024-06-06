@@ -1,12 +1,15 @@
 "use client";
 
-import { RPC_URL } from "@/app/consts";
+import { CANDY_MACHINE_PUBLIC_KEY, RPC_URL } from "@/app/consts";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Connection, Transaction, VersionedTransaction } from "@solana/web3.js";
 import axios from "axios";
 import base58 from "bs58";
 import React from "react";
 import { useToast } from "./ui/use-toast";
+import { fetchCandyMachine, mplCandyMachine } from "@metaplex-foundation/mpl-candy-machine";
+import { createUmi } from "@metaplex-foundation/umi-bundle-defaults";
+import { Umi } from "@metaplex-foundation/umi";
 
 const MintButton = () => {
   const wallet = useWallet();
@@ -14,13 +17,34 @@ const MintButton = () => {
 
   const onClick = async () => {
     let connection = new Connection(RPC_URL);
+
+    let umi = createUmi(RPC_URL).use(mplCandyMachine());
+
+    const candyMachine = await fetchCandyMachine(umi, CANDY_MACHINE_PUBLIC_KEY);
+  
+    const priceInLamports = candyMachine?;
+    if (priceInLamports === undefined) {
+      throw new Error('Price information not available for the Candy Machine.');
+    }
+
     if (wallet.publicKey) {
+      const balance = await connection.getBalance(wallet.publicKey)/ 1_000_000_000;
+      if (balance < 1.53) {
+        toast({ title: "Insufficient balance for minting" });
+        return;
+      }
       const walletPubKey = base58.encode(wallet.publicKey.toBuffer());
-      const data = await axios.post("/api/mint", { wallet: walletPubKey });
-      console.log(data.data);
+      const response = await axios.post("/api/mint", { wallet: walletPubKey });
+      const txData = response.data;
+      console.log(txData);
+      
+      if (txData.error) {
+        throw new Error(txData.error);
+      }
       const tx = VersionedTransaction.deserialize(
-        Buffer.from(data.data.tx, "base64")
+        Buffer.from(txData.tx, "base64")
       );
+
       try {
         const signedTx = await wallet.signTransaction?.(tx);
         const txSig = await connection.sendTransaction(signedTx!, {
@@ -55,3 +79,4 @@ const MintButton = () => {
 };
 
 export default MintButton;
+

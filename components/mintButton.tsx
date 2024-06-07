@@ -37,12 +37,27 @@ const MintButton = () => {
       );
 
       try {
+        if (!tx) {
+          throw new Error("Transaction object is not valid.");
+        }
+      
+        // Sign the transaction
         const signedTx = await wallet.signTransaction?.(tx);
-        const txSig = await connection.sendTransaction(signedTx!, {
-          skipPreflight: true,
+        if (!signedTx) {
+          throw new Error("Failed to sign the transaction.");
+        }
+      
+        // Send the transaction and include preflight checks
+        const txSig = await connection.sendTransaction(signedTx, {
+          skipPreflight: false, // It's more secure to perform preflight checks
         });
-
-        await connection.confirmTransaction(txSig, "processed");
+      
+        // Confirm the transaction
+        const confirmation = await connection.confirmTransaction(txSig, "processed");
+        if (confirmation.value.err) {
+          throw new Error("Transaction failed during confirmation.");
+        }
+      
 
         toast({
           title: "Minting was successfull!",

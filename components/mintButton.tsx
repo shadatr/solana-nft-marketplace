@@ -7,7 +7,7 @@ import axios from "axios";
 import base58 from "bs58";
 import React from "react";
 import { useToast } from "./ui/use-toast";
-import { fetchCandyMachine, mplCandyMachine } from "@metaplex-foundation/mpl-candy-machine";
+import { fetchCandyGuard, fetchCandyMachine, mplCandyMachine } from "@metaplex-foundation/mpl-candy-machine";
 import { createUmi } from "@metaplex-foundation/umi-bundle-defaults";
 import { Umi } from "@metaplex-foundation/umi";
 
@@ -17,15 +17,6 @@ const MintButton = () => {
 
   const onClick = async () => {
     let connection = new Connection(RPC_URL);
-
-    let umi = createUmi(RPC_URL).use(mplCandyMachine());
-
-    const candyMachine = await fetchCandyMachine(umi, CANDY_MACHINE_PUBLIC_KEY);
-  
-    const priceInLamports = candyMachine?;
-    if (priceInLamports === undefined) {
-      throw new Error('Price information not available for the Candy Machine.');
-    }
 
     if (wallet.publicKey) {
       const balance = await connection.getBalance(wallet.publicKey)/ 1_000_000_000;

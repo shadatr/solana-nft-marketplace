@@ -6,6 +6,7 @@ const nextConfig = {
   images: {
     domains: ["arweave.net"],
   },
+  
   webpack: (config) => {
     config.externals.push("pino-pretty", "lokijs", "encoding");
     return config;

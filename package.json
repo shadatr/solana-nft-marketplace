@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@metaplex-foundation/js": "^0.20.1",
+    "@metaplex-foundation/js": "^0.19.5",
     "@metaplex-foundation/mpl-candy-machine": "^6.0.1",
     "@metaplex-foundation/mpl-token-metadata": "^3.2.0",
     "@metaplex-foundation/umi": "^0.9.1",
